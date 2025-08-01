@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LendTrack - Money Tracker with Cloud Backup</title>
+    <title>LendTrack - Secure Money Tracker</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -64,6 +64,121 @@
         .sync-status.synced { background: rgba(76,175,80,0.8); }
         .sync-status.syncing { background: rgba(255,193,7,0.8); }
         .sync-status.error { background: rgba(244,67,54,0.8); }
+        
+        /* Enhanced Authentication Styles */
+        .auth-container { 
+            max-width: 480px; 
+            margin: 30px auto; 
+            padding: 35px; 
+            background: white; 
+            border-radius: 15px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .auth-title { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            color: #667eea; 
+            font-size: 2.2em; 
+            font-weight: 700;
+        }
+        .auth-tabs {
+            display: flex;
+            background: #f8f9ff;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 15px 12px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+        .auth-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .auth-tab:hover:not(.active) {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        .auth-section {
+            display: none;
+        }
+        .auth-section.active {
+            display: block;
+        }
+        
+        /* Email Verification Success Screen */
+        .verification-success {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f1f8f1 100%);
+            border: 2px solid #4caf50;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .verification-success h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        .verification-success p {
+            color: #2e7d32;
+            margin-bottom: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .verification-success .email-highlight {
+            background: rgba(76, 175, 80, 0.2);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        
+        .verification-notice {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .verification-notice h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .verification-notice p {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        /* Remember Me Checkbox */
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        .remember-me input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+        .remember-me label {
+            margin-bottom: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+        
         .tabs {
             display: flex;
             background: white;
@@ -133,11 +248,37 @@
             width: 100%;
         }
         button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);}
+        button:disabled { 
+            background: #ccc; 
+            cursor: not-allowed; 
+            transform: none; 
+            box-shadow: none;
+        }
         .btn-success {background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);}
         .btn-danger {background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);}
         .btn-info {background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);}
-        .auth-container { max-width: 400px; margin: 50px auto; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);}
-        .auth-title { text-align: center; margin-bottom: 25px; color: #667eea; font-size: 2em; font-weight: 700;}
+        .btn-warning {background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);}
+        
+        .auth-message { padding: 12px; border-radius: 8px; margin: 15px 0; font-weight: 600; font-size: 14px;}
+        .auth-message.success { background: #e8f5e8; color: #2e7d32; border: 1px solid #4caf50; }
+        .auth-message.error { background: #ffebee; color: #c62828; border: 1px solid #f44336; }
+        .auth-message.loading { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+        .auth-message.info { background: #e3f2fd; color: #1565c0; border: 1px solid #2196f3; }
+        
+        .auth-link {
+            text-align: center;
+            margin: 15px 0;
+            color: #667eea;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 14px;
+            display: block;
+        }
+        .auth-link:hover {
+            color: #764ba2;
+        }
+        
+        /* Copy all person-card and other styles from previous version */
         .person-card {
             background: linear-gradient(120deg, #f3f3fa 0%, #e8ecfa 100%);
             padding: 0 0 18px 0;
@@ -291,9 +432,10 @@
             .person-details { font-size: 13px;}
             .balance { font-size: 1em;}
             .modal-content { margin: 10px; padding: 15px; max-height: 90vh;}
-            .auth-container { margin: 30px auto; padding: 25px;}
+            .auth-container { margin: 20px auto; padding: 25px;}
             .auth-title { font-size: 1.8em;}
             .reports-main-figure { font-size: 1.5em;}
+            .auth-tabs { flex-direction: column;}
         }
     </style>
 </head>
@@ -304,32 +446,102 @@
         <p style="margin-top: 20px;">Connecting to Firebase...</p>
     </div>
 
-    <!-- Authentication Screen -->
+    <!-- Enhanced Authentication Screen -->
     <div id="authScreen" class="auth-container hidden">
         <h2 class="auth-title">🏦 LendTrack</h2>
-        <div id="firebaseAuth">
-            <h3 style="margin-bottom: 20px; color: #2c3e50;">Sign In to Sync Your Data</h3>
+        <p style="text-align: center; color: #666; margin-bottom: 20px;">Secure Money Lending Tracker</p>
+        
+        <!-- Authentication Tabs -->
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="showAuthTab('signin')">Sign In</button>
+            <button class="auth-tab" onclick="showAuthTab('signup')">Sign Up</button>
+            <button class="auth-tab" onclick="showAuthTab('reset')">Reset Password</button>
+        </div>
+
+        <!-- Sign In Section -->
+        <div id="signinSection" class="auth-section active">
             <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" placeholder="Enter your email" required>
+                <label for="signinEmail">Email:</label>
+                <input type="email" id="signinEmail" placeholder="Enter your email" required>
             </div>
             <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" placeholder="Enter password (min 6 chars)" required>
+                <label for="signinPassword">Password:</label>
+                <input type="password" id="signinPassword" placeholder="Enter your password" required>
+            </div>
+            <div class="remember-me">
+                <input type="checkbox" id="rememberEmail">
+                <label for="rememberEmail">Remember my email</label>
             </div>
             <button onclick="signIn()" class="btn-success">Sign In</button>
-            <p style="margin: 10px 0; text-align: center; color: #666;">or</p>
-            <button onclick="signUp()" class="btn-info">Create New Account</button>
-            <div id="authStatus" style="margin-top: 15px;"></div>
+            <div class="auth-link" onclick="showAuthTab('reset')">Forgot your password?</div>
         </div>
+
+        <!-- Sign Up Section -->
+        <div id="signupSection" class="auth-section">
+            <div class="form-group">
+                <label for="signupEmail">Email:</label>
+                <input type="email" id="signupEmail" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="signupPassword">Password:</label>
+                <input type="password" id="signupPassword" placeholder="Create your password" required>
+                <small style="color: #666; font-size: 12px;">You can use any password you prefer</small>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+            </div>
+            <button onclick="signUp()" id="signupButton" class="btn-info">Create Account</button>
+            <div class="auth-message info" style="font-size: 13px;">
+                📧 You will receive an email verification link after signing up. Please verify your email before you can use the app.
+            </div>
+        </div>
+
+        <!-- Password Reset Section -->
+        <div id="resetSection" class="auth-section">
+            <div class="form-group">
+                <label for="resetEmail">Email:</label>
+                <input type="email" id="resetEmail" placeholder="Enter your email address" required>
+            </div>
+            <button onclick="resetPassword()" class="btn-warning">Send Reset Link</button>
+            <div class="auth-message info">
+                📧 We'll send you a password reset link if an account with this email exists.
+            </div>
+            <div class="auth-link" onclick="showAuthTab('signin')">Back to Sign In</div>
+        </div>
+
+        <!-- Signup Success Message -->
+        <div id="signupSuccess" class="verification-success hidden">
+            <h3>🎉 Account Created Successfully!</h3>
+            <p>We've sent a verification email to:</p>
+            <div class="email-highlight" id="successEmail">your-email@example.com</div>
+            <p><strong>Next Steps:</strong></p>
+            <ol style="text-align: left; margin: 15px 0; padding-left: 20px;">
+                <li>Check your email inbox (and spam folder)</li>
+                <li>Click the verification link in the email</li>
+                <li>Return here and sign in with your credentials</li>
+            </ol>
+            <button onclick="resendVerificationEmail()" class="btn-info">Resend Verification Email</button>
+            <div class="auth-link" onclick="showAuthTab('signin')">Back to Sign In</div>
+        </div>
+
+        <!-- Email Verification Notice -->
+        <div id="verificationNotice" class="verification-notice hidden">
+            <h3>📧 Email Verification Required</h3>
+            <p>Please check your email and click the verification link before you can access your account.</p>
+            <button onclick="resendVerificationEmail()" class="btn-info">Resend Verification Email</button>
+            <div class="auth-link" onclick="signOut()">Sign out and try with different email</div>
+        </div>
+
+        <div id="authStatus"></div>
     </div>
 
-    <!-- Main App -->
+    <!-- Main App (same as before) -->
     <div id="mainApp" class="container hidden">
         <div class="header">
             <div class="sync-status" id="syncStatus">🔄 Syncing...</div>
             <h1>💰 LendTrack</h1>
-            <p>Money Lending Tracker with Cloud Backup</p>
+            <p>Secure Money Lending Tracker with Cloud Backup</p>
         </div>
         
         <div class="tabs">
@@ -458,13 +670,14 @@
                 <div class="status-card">
                     <h4>👤 Account</h4>
                     <p id="userEmail">Not signed in</p>
+                    <p id="emailVerified">Email verification: Unknown</p>
                     <button onclick="signOut()" class="btn-danger" style="margin-top: 10px;">Sign Out</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Person Detail Modal -->
+    <!-- Person Detail Modal (same as before) -->
     <div id="personModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -495,8 +708,28 @@
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut as firebaseSignOut, 
+            onAuthStateChanged,
+            sendEmailVerification,
+            sendPasswordResetEmail,
+            updateProfile
+        } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            doc, 
+            updateDoc, 
+            deleteDoc, 
+            query, 
+            where, 
+            orderBy 
+        } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
         // Your Firebase configuration
         const firebaseConfig = {
@@ -521,10 +754,13 @@
         let transactionsData = [];
         let repaymentsData = [];
 
-        // Make functions global so HTML can access them
+        // Make functions global for HTML access
+        window.showAuthTab = showAuthTab;
         window.signIn = signIn;
         window.signUp = signUp;
         window.signOut = signOut;
+        window.resetPassword = resetPassword;
+        window.resendVerificationEmail = resendVerificationEmail;
         window.showTab = showTab;
         window.closeModal = closeModal;
         window.addPerson = addPerson;
@@ -539,21 +775,34 @@
             const todayString = getCurrentDateString();
             
             // Set default dates
-            document.getElementById('lendDate').value = todayString;
-            document.getElementById('repayDate').value = todayString;
-            document.getElementById('calcDate').value = todayString;
+            if (document.getElementById('lendDate')) document.getElementById('lendDate').value = todayString;
+            if (document.getElementById('repayDate')) document.getElementById('repayDate').value = todayString;
+            if (document.getElementById('calcDate')) document.getElementById('calcDate').value = todayString;
+            
+            // Load remembered email
+            loadRememberedEmail();
             
             // Setup form listeners
-            document.getElementById('addPersonForm').addEventListener('submit', addPerson);
-            document.getElementById('repaymentForm').addEventListener('submit', addRepayment);
-            document.getElementById('calculatorForm').addEventListener('submit', calculateInterest);
+            if (document.getElementById('addPersonForm')) {
+                document.getElementById('addPersonForm').addEventListener('submit', addPerson);
+            }
+            if (document.getElementById('repaymentForm')) {
+                document.getElementById('repaymentForm').addEventListener('submit', addRepayment);
+            }
+            if (document.getElementById('calculatorForm')) {
+                document.getElementById('calculatorForm').addEventListener('submit', calculateInterest);
+            }
             
             // Listen for auth state changes
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     currentUser = user;
-                    showMainApp();
-                    loadAllData();
+                    if (user.emailVerified) {
+                        showMainApp();
+                        loadAllData();
+                    } else {
+                        showEmailVerificationNotice();
+                    }
                 } else {
                     currentUser = null;
                     showAuthScreen();
@@ -562,13 +811,62 @@
             });
         });
 
-        // Authentication functions
-        async function signUp() {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
+        // Email remembering functions
+        function saveRememberedEmail(email) {
+            if (document.getElementById('rememberEmail').checked) {
+                localStorage.setItem('lendtrack_remembered_email', email);
+            } else {
+                localStorage.removeItem('lendtrack_remembered_email');
+            }
+        }
+
+        function loadRememberedEmail() {
+            const rememberedEmail = localStorage.getItem('lendtrack_remembered_email');
+            if (rememberedEmail) {
+                document.getElementById('signinEmail').value = rememberedEmail;
+                document.getElementById('rememberEmail').checked = true;
+            }
+        }
+
+        // Enhanced Authentication functions
+        function showAuthTab(tabName) {
+            // Remove active class from all tabs and sections
+            document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.auth-section').forEach(section => section.classList.remove('active'));
             
-            if (!email || !password) {
-                showAuthStatus('Please enter both email and password', 'error');
+            // Hide success/notice screens
+            document.getElementById('signupSuccess').classList.add('hidden');
+            document.getElementById('verificationNotice').classList.add('hidden');
+            
+            // Add active class to selected tab and section
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Section').classList.add('active');
+            
+            // Clear previous messages
+            showAuthStatus('', 'clear');
+            
+            // Auto-fill reset email if coming from signin
+            if (tabName === 'reset') {
+                const signinEmail = document.getElementById('signinEmail').value;
+                if (signinEmail) {
+                    document.getElementById('resetEmail').value = signinEmail;
+                }
+            }
+        }
+
+        async function signUp() {
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+            
+            // Basic validation
+            if (!email || !password || !confirmPassword) {
+                showAuthStatus('Please fill in all fields', 'error');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showAuthStatus('Please enter a valid email address', 'error');
                 return;
             }
             
@@ -577,19 +875,45 @@
                 return;
             }
             
+            if (password !== confirmPassword) {
+                showAuthStatus('Passwords do not match', 'error');
+                return;
+            }
+            
             try {
                 showAuthStatus('Creating account...', 'loading');
-                await createUserWithEmailAndPassword(auth, email, password);
-                showAuthStatus('Account created successfully!', 'success');
+                
+                // Create user account
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Send email verification
+                await sendEmailVerification(user);
+                
+                // Show success message
+                showSignupSuccess(email);
+                
             } catch (error) {
                 console.error('Sign up error:', error);
                 showAuthStatus(getAuthErrorMessage(error.code), 'error');
             }
         }
 
+        function showSignupSuccess(email) {
+            // Hide all sections and tabs
+            document.querySelectorAll('.auth-section').forEach(section => section.classList.remove('active'));
+            document.querySelectorAll('.auth-tab').forEach(tab => tab.classList.remove('active'));
+            
+            // Show success screen
+            document.getElementById('signupSuccess').classList.remove('hidden');
+            document.getElementById('successEmail').textContent = email;
+            
+            showAuthStatus('', 'clear');
+        }
+
         async function signIn() {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
+            const email = document.getElementById('signinEmail').value.trim();
+            const password = document.getElementById('signinPassword').value.trim();
             
             if (!email || !password) {
                 showAuthStatus('Please enter both email and password', 'error');
@@ -598,11 +922,56 @@
             
             try {
                 showAuthStatus('Signing in...', 'loading');
+                
+                // Save email if remember is checked
+                saveRememberedEmail(email);
+                
                 await signInWithEmailAndPassword(auth, email, password);
-                showAuthStatus('Signed in successfully!', 'success');
+                
+                // Auth state change will handle the rest
+                
             } catch (error) {
                 console.error('Sign in error:', error);
                 showAuthStatus(getAuthErrorMessage(error.code), 'error');
+            }
+        }
+
+        async function resetPassword() {
+            const email = document.getElementById('resetEmail').value.trim();
+            
+            if (!email) {
+                showAuthStatus('Please enter your email address', 'error');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showAuthStatus('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            try {
+                showAuthStatus('Sending reset link...', 'loading');
+                await sendPasswordResetEmail(auth, email);
+                showAuthStatus('Password reset link sent! Check your email.', 'success');
+            } catch (error) {
+                console.error('Password reset error:', error);
+                if (error.code === 'auth/user-not-found') {
+                    showAuthStatus('Reset link sent if account exists.', 'info');
+                } else {
+                    showAuthStatus(getAuthErrorMessage(error.code), 'error');
+                }
+            }
+        }
+
+        async function resendVerificationEmail() {
+            if (currentUser && !currentUser.emailVerified) {
+                try {
+                    await sendEmailVerification(currentUser);
+                    showAuthStatus('Verification email sent! Check your inbox.', 'success');
+                } catch (error) {
+                    console.error('Resend verification error:', error);
+                    showAuthStatus('Error sending email. Please try again.', 'error');
+                }
             }
         }
 
@@ -613,6 +982,12 @@
             } catch (error) {
                 console.error('Sign out error:', error);
             }
+        }
+
+        // Validation functions (simplified - no complex password requirements)
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
         }
 
         // UI functions
@@ -627,30 +1002,32 @@
         function showAuthScreen() {
             document.getElementById('authScreen').classList.remove('hidden');
             document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('signupSuccess').classList.add('hidden');
+            document.getElementById('verificationNotice').classList.add('hidden');
+        }
+
+        function showEmailVerificationNotice() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('signupSuccess').classList.add('hidden');
+            document.getElementById('verificationNotice').classList.remove('hidden');
         }
 
         function showMainApp() {
             document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('signupSuccess').classList.add('hidden');
+            document.getElementById('verificationNotice').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
             updateCloudStatus();
         }
 
         function showAuthStatus(message, type) {
             const statusDiv = document.getElementById('authStatus');
-            statusDiv.innerHTML = `<div class="auth-message ${type}">${message}</div>`;
-            
-            // Add CSS for auth messages
-            if (!document.querySelector('.auth-message-styles')) {
-                const style = document.createElement('style');
-                style.className = 'auth-message-styles';
-                style.textContent = `
-                    .auth-message { padding: 10px; border-radius: 5px; margin-top: 15px; }
-                    .auth-message.success { background: #e8f5e8; color: #2e7d32; border: 1px solid #4caf50; }
-                    .auth-message.error { background: #ffebee; color: #c62828; border: 1px solid #f44336; }
-                    .auth-message.loading { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
-                `;
-                document.head.appendChild(style);
+            if (type === 'clear' || !message) {
+                statusDiv.innerHTML = '';
+                return;
             }
+            statusDiv.innerHTML = `<div class="auth-message ${type}">${message}</div>`;
         }
 
         function getAuthErrorMessage(errorCode) {
@@ -660,28 +1037,39 @@
                 'auth/email-already-in-use': 'An account with this email already exists.',
                 'auth/weak-password': 'Password should be at least 6 characters.',
                 'auth/invalid-email': 'Please enter a valid email address.',
-                'auth/too-many-requests': 'Too many failed attempts. Please try again later.'
+                'auth/too-many-requests': 'Too many failed attempts. Please try again later.',
+                'auth/user-disabled': 'This account has been disabled.',
+                'auth/operation-not-allowed': 'Email/password accounts are not enabled.',
+                'auth/network-request-failed': 'Network error. Please check your connection.'
             };
             return errorMessages[errorCode] || 'An error occurred. Please try again.';
         }
 
         function updateSyncStatus(status, message) {
             const syncStatus = document.getElementById('syncStatus');
-            syncStatus.className = `sync-status ${status}`;
-            syncStatus.textContent = message;
+            if (syncStatus) {
+                syncStatus.className = `sync-status ${status}`;
+                syncStatus.textContent = message;
+            }
         }
 
         function updateCloudStatus() {
             if (currentUser) {
-                document.getElementById('userEmail').textContent = currentUser.email;
-                document.getElementById('lastSync').textContent = `Last sync: ${new Date().toLocaleString()}`;
-                document.getElementById('dataCount').textContent = `${peopleData.length} people, ${transactionsData.length} transactions backed up`;
+                const userEmailEl = document.getElementById('userEmail');
+                const emailVerifiedEl = document.getElementById('emailVerified');
+                const lastSyncEl = document.getElementById('lastSync');
+                const dataCountEl = document.getElementById('dataCount');
+                
+                if (userEmailEl) userEmailEl.textContent = currentUser.email;
+                if (emailVerifiedEl) emailVerifiedEl.textContent = `Email verification: ${currentUser.emailVerified ? '✅ Verified' : '❌ Not verified'}`;
+                if (lastSyncEl) lastSyncEl.textContent = `Last sync: ${new Date().toLocaleString()}`;
+                if (dataCountEl) dataCountEl.textContent = `${peopleData.length} people, ${transactionsData.length} transactions backed up`;
             }
         }
 
-        // Data functions
+        // Data functions (same as before)
         async function loadAllData() {
-            if (!currentUser) return;
+            if (!currentUser || !currentUser.emailVerified) return;
             
             try {
                 updateSyncStatus('syncing', '🔄 Loading data...');
@@ -778,10 +1166,13 @@
             return { originalPrincipal: totalPrincipal, totalInterest, totalRepaid, netAmountDue };
         }
 
-        // App functions
+        // App functions (same as before, but with email verification check)
         async function addPerson(e) {
             e.preventDefault();
-            if (!currentUser) return;
+            if (!currentUser || !currentUser.emailVerified) {
+                alert('Please verify your email before adding data');
+                return;
+            }
             
             const name = document.getElementById('personName').value.trim();
             const phone = document.getElementById('personPhone').value.trim();
@@ -833,8 +1224,11 @@
             }
         }
 
+        // All other functions remain the same as in the previous version...
+        // (deletePerson, addRepayment, loadPeople, showPersonDetail, etc.)
+        
         async function deletePerson(personId) {
-            if (!currentUser || !confirm('Are you sure you want to delete this person and all their data?')) return;
+            if (!currentUser || !currentUser.emailVerified || !confirm('Are you sure you want to delete this person and all their data?')) return;
             
             try {
                 updateSyncStatus('syncing', '🔄 Deleting...');
@@ -866,7 +1260,7 @@
 
         async function addRepayment(e) {
             e.preventDefault();
-            if (!currentUser || !currentPersonId) return;
+            if (!currentUser || !currentUser.emailVerified || !currentPersonId) return;
             
             const amount = parseFloat(document.getElementById('repayAmount').value);
             const date = document.getElementById('repayDate').value;
@@ -914,6 +1308,8 @@
 
         function loadPeople() {
             const peopleList = document.getElementById('peopleList');
+            if (!peopleList) return;
+            
             if (peopleData.length === 0) {
                 peopleList.innerHTML = '<div class="no-data">No people added yet. Click "Add Person" to get started!</div>';
                 return;
@@ -1017,6 +1413,8 @@
 
         function populateCalculatorDropdown() {
             const dropdown = document.getElementById('calcPerson');
+            if (!dropdown) return;
+            
             dropdown.innerHTML = '<option value="">Select a person...</option>';
             peopleData.forEach(person => {
                 const option = document.createElement('option');
@@ -1058,6 +1456,8 @@
             });
             
             const reportsGrid = document.getElementById('reportsGrid');
+            if (!reportsGrid) return;
+            
             reportsGrid.innerHTML = `
                 <div class="reports-card">
                     <div class="reports-main-figure">₹${totalPrincipal.toFixed(2)}</div>
@@ -1098,7 +1498,8 @@
         }
 
         function closeModal() {
-            document.getElementById('personModal').style.display = 'none';
+            const modal = document.getElementById('personModal');
+            if (modal) modal.style.display = 'none';
         }
 
         // Close modal when clicking outside
